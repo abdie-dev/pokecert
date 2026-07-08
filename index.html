@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembuat Sertifikat Pelatih Pokémon</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Press+Start+2P&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        pixel: ['"Press Start 2P"', 'monospace'],
+                        serif: ['Cinzel', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Gaya khusus untuk scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ef4444;
+        }
+        
+        /* Animasi mengambang Pokeball */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(10deg); }
+        }
+        .floating-pokeball {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans flex flex-col justify-between">
+
+    <!-- HEADER -->
+    <header class="bg-slate-950 border-b border-slate-800 py-4 px-6 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-red-600 p-2 rounded-full shadow-inner border-2 border-white floating-pokeball">
+                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M2 12h20" />
+                        <circle cx="12" cy="12" r="3" fill="currentColor" class="text-slate-900" />
+                        <circle cx="12" cy="12" r="1" fill="currentColor" class="text-white" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-yellow-500">
+                        POKÉMON TRAINER
+                    </h1>
+                    <p class="text-xs text-slate-400 font-semibold tracking-widest uppercase">Pembuat Sertifikat Resmi</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-full border border-slate-700">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-semibold text-slate-300">Sistem Liga Pokémon Aktif</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- FORM CONTROLS (LEFT COLUMN) -->
+            <section class="lg:col-span-5 bg-slate-950/80 backdrop-blur border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-red-500"></i> Kustomisasi Sertifikat
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Sesuaikan identitas pelatih Anda untuk dicetak pada sertifikat resmi Liga.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Tema Warna -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Pilih Tema Sertifikat</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="setTheme('classic')" id="theme-btn-classic" class="theme-btn py-2 px-1 rounded-xl border-2 border-red-500 bg-red-950/40 text-xs font-semibold hover:bg-slate-800 transition">
+                                <span class="block w-4 h-4 rounded-full bg-red-500 mx-auto mb-1"></span>
+                                Klasik
+                            </button>
+                            <button onclick="setTheme('gold')" id="theme-btn-gold" class="theme-btn py-2 px-1 rounded-xl border-2 border-slate-800 bg-slate-900 text-xs font-semibold hover:bg-slate-800 transition">
+                                <span class="block w-4 h-4 rounded-full bg-yellow-500 mx-auto mb-1"></span>
+                                Emas
+                            </button>
+                            <button onclick="setTheme('mystic')" id="theme-btn-mystic" class="theme-btn py-2 px-1 rounded-xl border-2 border-slate-800 bg-slate-900 text-xs font-semibold hover:bg-slate-800 transition">
+                                <span class="block w-4 h-4 rounded-full bg-blue-500 mx-auto mb-1"></span>
+                                Mistis
+                            </button>
+                            <button onclick="setTheme('dark')" id="theme-btn-dark" class="theme-btn py-2 px-1 rounded-xl border-2 border-slate-800 bg-slate-900 text-xs font-semibold hover:bg-slate-800 transition">
+                                <span class="block w-4 h-4 rounded-full bg-purple-900 mx-auto mb-1"></span>
+                                Gelap
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-800 my-4" />
+
+                    <!-- Nama & Gelar -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="input-name" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Nama Pelatih</label>
+                            <input type="text" id="input-name" value="Ash Ketchum" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Masukkan nama..." />
+                        </div>
+                        <div>
+                            <label for="input-title" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Gelar Pelatih</label>
+                            <select id="input-title" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                <option value="Juara Liga Pokémon">Juara Liga Pokémon</option>
+                                <option value="Pelatih Pokémon Elit">Pelatih Pokémon Elit</option>
+                                <option value="Master Pokémon">Master Pokémon</option>
+                                <option value="Kolektor Pokémon Legendaris">Kolektor Pokémon</option>
+                                <option value="Pelatih Pemula">Pelatih Pemula</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Region & ID -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="input-region" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Asal Wilayah (Region)</label>
+                            <select id="input-region" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                <option value="Kanto">Kanto</option>
+                                <option value="Johto">Johto</option>
+                                <option value="Hoenn">Hoenn</option>
+                                <option value="Sinnoh">Sinnoh</option>
+                                <option value="Unova">Unova</option>
+                                <option value="Kalos">Kalos</option>
+                                <option value="Alola">Alola</option>
+                                <option value="Galar">Galar</option>
+                                <option value="Paldea">Paldea</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="input-id" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">ID Pelatih (No. Seri)</label>
+                            <div class="relative">
+                                <input type="text" id="input-id" value="092025" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Misal: 00251" />
+                                <button onclick="generateRandomID()" class="absolute right-2 top-1.5 text-slate-400 hover:text-red-500 p-1.5 transition" title="Acak ID">
+                                    <i class="fa-solid fa-dice"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tanggal Terbit -->
+                    <div>
+                        <label for="input-date" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Tanggal Kelulusan</label>
+                        <input type="date" id="input-date" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    </div>
+
+                    <hr class="border-slate-800 my-4" />
+
+                    <!-- Partner Pokémon & Foto Pelatih -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Partner Pokémon Pendamping</label>
+                        <div class="grid grid-cols-4 gap-2 mb-3">
+                            <button onclick="setPartner('pikachu')" class="partner-btn bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl p-2 flex flex-col items-center gap-1 transition">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" class="w-10 h-10 object-contain" alt="Pikachu" />
+                                <span class="text-[10px] text-slate-400">Pikachu</span>
+                            </button>
+                            <button onclick="setPartner('charizard')" class="partner-btn bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl p-2 flex flex-col items-center gap-1 transition">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" class="w-10 h-10 object-contain" alt="Charizard" />
+                                <span class="text-[10px] text-slate-400">Charizard</span>
+                            </button>
+                            <button onclick="setPartner('mewtwo')" class="partner-btn bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl p-2 flex flex-col items-center gap-1 transition">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png" class="w-10 h-10 object-contain" alt="Mewtwo" />
+                                <span class="text-[10px] text-slate-400">Mewtwo</span>
+                            </button>
+                            <button onclick="setPartner('lucario')" class="partner-btn bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl p-2 flex flex-col items-center gap-1 transition">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png" class="w-10 h-10 object-contain" alt="Lucario" />
+                                <span class="text-[10px] text-slate-400">Lucario</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Upload Foto Kustom -->
+                        <div>
+                            <span class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Atau Unggah Avatar Kustom</span>
+                            <div class="flex items-center justify-center w-full">
+                                <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-slate-700 border-dashed rounded-xl cursor-pointer bg-slate-900 hover:bg-slate-850 hover:border-red-500 transition">
+                                    <div class="flex flex-col items-center justify-center pt-3 pb-4">
+                                        <i class="fa-solid fa-cloud-arrow-up text-slate-500 mb-2"></i>
+                                        <p class="text-xs text-slate-400"><span class="font-semibold text-red-400">Pilih berkas</span> gambar (.png, .jpg)</p>
+                                    </div>
+                                    <input type="file" id="input-avatar" class="hidden" accept="image/*" onchange="handleAvatarUpload(event)" />
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-800 my-4" />
+
+                    <!-- Pemilihan Lencana (Gym Badges) -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex justify-between items-center">
+                            <span>Lencana Kanto (Gym Badges)</span>
+                            <span class="text-[10px] text-red-400 lowercase italic">ketuk untuk aktifkan</span>
+                        </label>
+                        <div class="grid grid-cols-8 gap-2 bg-slate-900 p-3 rounded-xl border border-slate-800">
+                            <!-- Badge 1: Boulder -->
+                            <button onclick="toggleBadge(0)" id="badge-btn-0" class="badge-selector p-1 bg-slate-950 rounded-lg opacity-40 hover:opacity-100 transition border border-slate-800" title="Boulder Badge">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/1.png" class="w-8 h-8 mx-auto object-contain" alt="Boulder Badge" onerror="this.src='https://cdn-icons-png.flaticon.com/512/8157/8157962.png'" />
+                            </button>
+                            <!-- Badge 2: Cascade -->
+                            <button onclick="toggleBadge(1)" id="badge-btn-1" class="badge-selector p-1 bg-slate-950 rounded-lg opacity-40 hover:opacity-100 transition border border-slate-800" title="Cascade Badge">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/2.png" class="w-8 h-8 mx-auto object-contain" alt="Cascade Badge" onerror="this.src='https://cdn-icons-png.flaticon.com/512/8157/8157962.png'" />
+                            </button>
+                            <!-- Badge 3: Thunder -->
+                            <button onclick="toggleBadge(2)" id="badge-btn-2" class="badge-selector p-1 bg-slate-950 rounded-lg opacity-40 hover:opacity-100 transition border border-slate-800" title="Thunder Badge">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/3.png" class="w-8 h-8 mx-auto object-contain" alt="Thunder Badge" onerror="this.src='https://cdn-icons-png.flaticon.com/512/8157/8157962.png'" />
+                            </button>
+                            <!-- Badge 4: Rainbow -->
+                            <button onclick="toggleBadge(3)" id="badge-btn-3" class="badge-selector p-1 bg-slate-950 rounded-lg opacity-40 hover:opacity-100 transition border border-slate-800" title="Rainbow Badge">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/4.png" class="w-8 h-8 mx-auto object-contain" alt="Rainbow Badge" onerror="this.src='https://cdn-icons-png.flaticon.com/512/8157/8157962.png'" />
+                            </button>
+                            <!-- Badge 5: Soul -->
+                            <button onclick="toggleBadge(4)" id="badge-btn-4" class="badge-selector p-1 bg-slate-950 rounded-lg opacity-40 hover:opacity-100 transition border border-slate-800" title="Soul Badge">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/5.png" class="w-8 h-8 mx-auto object-contain" alt="Soul Badge" onerror="this.src='https://cdn-icons-png.flaticon.com/512/8157/8157962.png'" />
+                            </button>
+                            <!-- Badge 6: Marsh -->
+                            <button onclick="toggleBadge(5)" id="badge-btn-5" class="badge-selector p-1 bg-slate-950 rounded-lg opacity-40 hover:opacity-100 transition border border-slate-800" title="Marsh Badge">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/6.png" class="w-8 h-8 mx-auto object-contain" alt="Marsh Badge" onerror="this.src='https://cdn-icons-png.flaticon.com/512/8157/8157962.png'" />
+                            </button>
+                            <!-- Badge 7: Volcano -->
+                            <button onclick="toggleBadge(6)" id="badge-btn-6" class="badge-selector p-1 bg-slate-950 rounded-lg opacity-40 hover:opacity-100 transition border border-slate-800" title="Volcano Badge">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/7.png" class="w-8 h-8 mx-auto object-contain" alt="Volcano Badge" onerror="this.src='https://cdn-icons-png.flaticon.com/512/8157/8157962.png'" />
+                            </button>
+                            <!-- Badge 8: Earth -->
+                            <button onclick="toggleBadge(7)" id="badge-btn-7" class="badge-selector p-1 bg-slate-950 rounded-lg opacity-40 hover:opacity-100 transition border border-slate-800" title="Earth Badge">
+                                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/8.png" class="w-8 h-8 mx-auto object-contain" alt="Earth Badge" onerror="this.src='https://cdn-icons-png.flaticon.com/512/8157/8157962.png'" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Button -->
+                <div class="pt-4">
+                    <button onclick="exportToPDF()" class="w-full bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-red-950/50 hover:shadow-red-500/25 transition duration-300 flex items-center justify-center gap-2 transform active:scale-[0.98]">
+                        <i class="fa-solid fa-file-pdf text-lg"></i>
+                        <span>Unduh Sertifikat PDF</span>
+                    </button>
+                    <p class="text-[10px] text-center text-slate-500 mt-2">Dibuat menggunakan format vektor resolusi tinggi</p>
+                </div>
+            </section>
+
+            <!-- LIVE PREVIEW CANVAS (RIGHT COLUMN) -->
+            <section class="lg:col-span-7 flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-semibold text-slate-400 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span> Pratinjau Sertifikat (Resolusi Asli)
+                    </span>
+                    <button onclick="resetInputs()" class="text-xs font-semibold text-slate-400 hover:text-red-400 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-left"></i> Setel Ulang
+                    </button>
+                </div>
+
+                <!-- CERTIFICATE FRAME BOX -->
+                <div class="w-full overflow-x-auto rounded-3xl border border-slate-800 shadow-2xl bg-slate-950 p-2 md:p-6 flex justify-center items-center">
+                    
+                    <!-- THE ACTUAL CERTIFICATE (To be printed/rendered landscape A4) -->
+                    <div id="pokemon-certificate" class="w-[842px] h-[595px] min-w-[842px] relative bg-white overflow-hidden p-8 flex flex-col justify-between select-none">
+                        
+                        <!-- THEME ACCENTS -->
+                        <!-- 1. Background Watermarks -->
+                        <div id="cert-watermark" class="absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center">
+                            <!-- Large pokeball watermark -->
+                            <svg class="w-[450px] h-[450px]" fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                        </div>
+
+                        <!-- 2. Gilded Border Frame -->
+                        <div id="cert-border" class="absolute inset-4 border-8 border-red-600 pointer-events-none rounded transition-all duration-300">
+                            <div class="absolute inset-1.5 border border-red-700/60"></div>
+                            <!-- Corner Accents -->
+                            <div class="absolute -top-3 -left-3 w-8 h-8 bg-white border-2 border-red-600 flex items-center justify-center text-slate-900 rounded-full font-bold text-xs">★</div>
+                            <div class="absolute -top-3 -right-3 w-8 h-8 bg-white border-2 border-red-600 flex items-center justify-center text-slate-900 rounded-full font-bold text-xs">★</div>
+                            <div class="absolute -bottom-3 -left-3 w-8 h-8 bg-white border-2 border-red-600 flex items-center justify-center text-slate-900 rounded-full font-bold text-xs">★</div>
+                            <div class="absolute -bottom-3 -right-3 w-8 h-8 bg-white border-2 border-red-600 flex items-center justify-center text-slate-900 rounded-full font-bold text-xs">★</div>
+                        </div>
+
+                        <!-- 3. Header Ribbon -->
+                        <div class="relative z-10 flex flex-col items-center text-center pt-2">
+                            <p class="font-pixel text-[11px] text-slate-700 tracking-[0.25em] uppercase mb-1">INDONESIAN POKÉMON LEAGUE</p>
+                            <h3 id="cert-theme-title" class="font-serif text-3xl font-black tracking-wider text-red-600 uppercase mb-1">
+                                Sertifikat Kelulusan Pelatih
+                            </h3>
+                            <div class="flex items-center gap-3 w-full justify-center">
+                                <div class="h-[1px] w-24 bg-slate-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-red-600"></div>
+                                <div class="h-[1px] w-24 bg-slate-400"></div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Main Body Content -->
+                        <div class="relative z-10 grid grid-cols-12 gap-6 items-center px-6">
+                            
+                            <!-- Left: Certificate Statement -->
+                            <div class="col-span-8 space-y-4 text-left">
+                                <p class="text-xs font-semibold text-slate-500 italic uppercase tracking-wider">
+                                    Diberikan dengan kehormatan tertinggi kepada:
+                                </p>
+                                
+                                <div>
+                                    <!-- Trainer Name (Dynamically scales size if too long) -->
+                                    <h4 id="cert-name" class="font-serif text-3xl font-extrabold text-slate-900 border-b-2 border-slate-300 pb-1 inline-block min-w-[280px]">
+                                        Ash Ketchum
+                                    </h4>
+                                    <p id="cert-title" class="text-xs font-bold text-red-600 mt-1 uppercase tracking-widest font-pixel">
+                                        Juara Liga Pokémon
+                                    </p>
+                                </div>
+
+                                <p class="text-xs text-slate-700 leading-relaxed max-w-[450px]">
+                                    Sertifikat ini secara resmi mengakui pencapaian luar biasa pelatih di atas dari Wilayah <strong id="cert-region" class="text-slate-900">Kanto</strong> yang telah berhasil menaklukkan tantangan para Pemimpin Gym, menguasai taktik pertempuran, dan membuktikan persahabatan sejati dengan rekan-rekan Pokémon mereka.
+                                </p>
+
+                                <div class="flex gap-4 items-center">
+                                    <div class="text-[11px] text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded font-mono">
+                                        SERI ID: <span id="cert-id" class="font-bold text-slate-800">#092025</span>
+                                    </div>
+                                    <div class="text-[11px] text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded font-mono">
+                                        TANGGAL: <span id="cert-date" class="font-bold text-slate-800">08/07/2026</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Avatar / Sprite & Badges Area -->
+                            <div class="col-span-4 flex flex-col items-center justify-center gap-3">
+                                <!-- Photo Frame -->
+                                <div class="w-32 h-32 bg-slate-50 border-4 border-double border-slate-300 shadow-inner rounded-xl overflow-hidden flex items-center justify-center relative">
+                                    <!-- Background Poke ball element inside photo -->
+                                    <div class="absolute inset-0 opacity-[0.04] pointer-events-none flex items-center justify-center">
+                                        <i class="fa-solid fa-circle-dot text-7xl"></i>
+                                    </div>
+                                    <img id="cert-avatar-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" class="w-28 h-28 object-contain z-10 transition-transform duration-300 hover:scale-105" alt="Trainer Partner" />
+                                </div>
+                                <div class="text-[10px] font-pixel text-slate-400 uppercase tracking-wider">Foto Partner</div>
+                            </div>
+
+                        </div>
+
+                        <!-- 5. Badges Display Shelf (Row at bottom) -->
+                        <div class="relative z-10 border-t border-slate-200 pt-4 flex flex-col gap-2">
+                            <p class="text-[10px] font-pixel text-slate-400 uppercase tracking-widest text-center">Lencana Kualifikasi Liga Terdaftar</p>
+                            <div id="cert-badges-container" class="flex items-center justify-center gap-6 min-h-[36px]">
+                                <!-- Active badges will render here dynamically -->
+                                <p id="no-badges-placeholder" class="text-xs text-slate-400 italic">Belum ada lencana yang diaktifkan</p>
+                            </div>
+                        </div>
+
+                        <!-- 6. Bottom Signatures & Seal -->
+                        <div class="relative z-10 flex items-end justify-between px-6 pt-2">
+                            <!-- Prof. Oak Signature -->
+                            <div class="text-center w-40">
+                                <div class="font-serif italic text-base text-slate-800 font-bold mb-1 border-b border-slate-300 select-none pb-0.5" style="font-family: 'Cinzel', serif;">
+                                    Prof. Oak
+                                </div>
+                                <div class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Professor Pokémon</div>
+                            </div>
+
+                            <!-- League Seal Badge (Golden/Red Circle) -->
+                            <div id="cert-seal" class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center border-4 border-double border-white shadow-md relative transform rotate-12">
+                                <div class="absolute inset-1 rounded-full border border-dashed border-white/40"></div>
+                                <span class="font-pixel text-[8px] text-white text-center font-bold tracking-tight">OFFICIAL<br>SEAL</span>
+                            </div>
+
+                            <!-- League Champion Signature -->
+                            <div class="text-center w-40">
+                                <div class="font-serif italic text-base text-slate-800 font-bold mb-1 border-b border-slate-300 select-none pb-0.5" style="font-family: 'Cinzel', serif;">
+                                    Lance
+                                </div>
+                                <div class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Ketua Komite Liga</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Custom Modals / Toast Notification -->
+    <div id="toast-notif" class="fixed bottom-5 right-5 bg-emerald-500 text-white py-3 px-5 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 translate-y-20 opacity-0 z-50">
+        <i class="fa-solid fa-circle-check text-xl"></i>
+        <div class="text-sm font-semibold" id="toast-message">Notifikasi Berhasil!</div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-6 px-6 mt-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+            <p>© 2026 Pembuat Sertifikat Pokémon. Dikembangkan dengan ❤️ untuk para Pelatih.</p>
+            <p>Pokémon dan hak kekayaan intelektual terkait adalah milik Nintendo, Game Freak, & The Pokémon Company.</p>
+        </div>
+    </footer>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        // State management
+        let activeTheme = 'classic';
+        let currentPartner = 'pikachu';
+        let activeBadges = [true, true, true, false, false, false, false, false]; // Default 3 badges active
+        let uploadedAvatarDataUrl = null;
+
+        const partnerUrls = {
+            pikachu: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png',
+            charizard: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png',
+            mewtwo: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png',
+            lucario: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png'
+        };
+
+        const themeStyles = {
+            classic: {
+                borderClass: 'border-red-600',
+                titleColor: 'text-red-600',
+                sealBg: 'bg-red-600',
+                badgeStyle: 'border-red-700/60',
+                watermarkColor: 'text-red-600'
+            },
+            gold: {
+                borderClass: 'border-yellow-500',
+                titleColor: 'text-yellow-600',
+                sealBg: 'bg-yellow-500',
+                badgeStyle: 'border-yellow-600',
+                watermarkColor: 'text-yellow-500'
+            },
+            mystic: {
+                borderClass: 'border-blue-600',
+                titleColor: 'text-blue-600',
+                sealBg: 'bg-blue-600',
+                badgeStyle: 'border-blue-700',
+                watermarkColor: 'text-blue-600'
+            },
+            dark: {
+                borderClass: 'border-purple-950',
+                titleColor: 'text-purple-950',
+                sealBg: 'bg-purple-950',
+                badgeStyle: 'border-purple-900',
+                watermarkColor: 'text-purple-950'
+            }
+        };
+
+        const badgesMetadata = [
+            { id: 1, name: "Boulder Badge" },
+            { id: 2, name: "Cascade Badge" },
+            { id: 3, name: "Thunder Badge" },
+            { id: 4, name: "Rainbow Badge" },
+            { id: 5, name: "Soul Badge" },
+            { id: 6, name: "Marsh Badge" },
+            { id: 7, name: "Volcano Badge" },
+            { id: 8, name: "Earth Badge" }
+        ];
+
+        // On DOM Load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set current date as default
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            document.getElementById('input-date').value = `${year}-${month}-${day}`;
+            
+            // Sync initial state
+            syncInputsToCertificate();
+            setTheme('classic');
+            updateBadgeUI();
+            
+            // Listeners for live typing
+            document.getElementById('input-name').addEventListener('input', syncInputsToCertificate);
+            document.getElementById('input-title').addEventListener('change', syncInputsToCertificate);
+            document.getElementById('input-region').addEventListener('change', syncInputsToCertificate);
+            document.getElementById('input-id').addEventListener('input', syncInputsToCertificate);
+            document.getElementById('input-date').addEventListener('input', syncInputsToCertificate);
+        });
+
+        // Function to update Certificate live from Form Inputs
+        function syncInputsToCertificate() {
+            const name = document.getElementById('input-name').value || 'Ash Ketchum';
+            const title = document.getElementById('input-title').value;
+            const region = document.getElementById('input-region').value;
+            const id = document.getElementById('input-id').value || '00000';
+            const dateValue = document.getElementById('input-date').value;
+            
+            // Formatting Date
+            let formattedDate = '08/07/2026';
+            if (dateValue) {
+                const dateObj = new Date(dateValue);
+                const d = String(dateObj.getDate()).padStart(2, '0');
+                const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const y = dateObj.getFullYear();
+                formattedDate = `${d}/${m}/${y}`;
+            }
+
+            document.getElementById('cert-name').textContent = name;
+            document.getElementById('cert-title').textContent = title;
+            document.getElementById('cert-region').textContent = region;
+            document.getElementById('cert-id').textContent = `#${id}`;
+            document.getElementById('cert-date').textContent = formattedDate;
+
+            // Dynamically scale down font if the name is too long
+            const nameEl = document.getElementById('cert-name');
+            if (name.length > 25) {
+                nameEl.style.fontSize = '1.25rem';
+            } else if (name.length > 18) {
+                nameEl.style.fontSize = '1.5rem';
+            } else {
+                nameEl.style.fontSize = '1.875rem';
+            }
+        }
+
+        // Random ID Generator
+        function generateRandomID() {
+            const randomNum = Math.floor(10000 + Math.random() * 90000);
+            document.getElementById('input-id').value = randomNum;
+            syncInputsToCertificate();
+            showToast('ID Pelatih Baru Berhasil Diacak!');
+        }
+
+        // Change Certificate Theme
+        function setTheme(theme) {
+            activeTheme = theme;
+            
+            // Clear current active btn border
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('border-red-500', 'bg-red-950/40', 'border-yellow-500', 'bg-yellow-950/40', 'border-blue-500', 'bg-blue-950/40', 'border-purple-900', 'bg-purple-950/40');
+                btn.classList.add('border-slate-800', 'bg-slate-900');
+            });
+
+            // Set current button active style
+            const activeBtn = document.getElementById(`theme-btn-${theme}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-slate-800', 'bg-slate-900');
+                if (theme === 'classic') activeBtn.classList.add('border-red-500', 'bg-red-950/40');
+                if (theme === 'gold') activeBtn.classList.add('border-yellow-500', 'bg-yellow-950/40');
+                if (theme === 'mystic') activeBtn.classList.add('border-blue-500', 'bg-blue-950/40');
+                if (theme === 'dark') activeBtn.classList.add('border-purple-900', 'bg-purple-950/40');
+            }
+
+            // Apply style to certificate elements
+            const style = themeStyles[theme];
+            const certBorder = document.getElementById('cert-border');
+            const certThemeTitle = document.getElementById('cert-theme-title');
+            const certSeal = document.getElementById('cert-seal');
+            const certWatermark = document.getElementById('cert-watermark');
+
+            // Reset classes
+            certBorder.className = `absolute inset-4 border-8 pointer-events-none rounded transition-all duration-300 ${style.borderClass}`;
+            // Adjust inner line border
+            certBorder.firstElementChild.className = `absolute inset-1.5 border ${style.badgeStyle}`;
+            
+            certThemeTitle.className = `font-serif text-3xl font-black tracking-wider uppercase mb-1 ${style.titleColor}`;
+            certSeal.className = `w-16 h-16 rounded-full flex items-center justify-center border-4 border-double border-white shadow-md relative transform rotate-12 ${style.sealBg}`;
+            certWatermark.className = `absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center ${style.watermarkColor}`;
+        }
+
+        // Set Partner Pokemon
+        function setPartner(pokemonName) {
+            currentPartner = pokemonName;
+            uploadedAvatarDataUrl = null; // Clear custom upload if user clicks default
+            
+            document.querySelectorAll('.partner-btn').forEach(btn => {
+                btn.classList.remove('border-red-500', 'bg-red-950/20');
+                btn.classList.add('border-slate-700', 'bg-slate-900');
+            });
+
+            // Find current and highlight
+            event.currentTarget.classList.add('border-red-500', 'bg-red-950/20');
+            event.currentTarget.classList.remove('border-slate-700', 'bg-slate-900');
+
+            document.getElementById('cert-avatar-img').src = partnerUrls[pokemonName];
+        }
+
+        // Handle File Reader for Custom Avatar Upload
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedAvatarDataUrl = e.target.result;
+                document.getElementById('cert-avatar-img').src = uploadedAvatarDataUrl;
+                
+                // Unhighlight quick select partners
+                document.querySelectorAll('.partner-btn').forEach(btn => {
+                    btn.classList.remove('border-red-500', 'bg-red-950/20');
+                    btn.classList.add('border-slate-700', 'bg-slate-900');
+                });
+                
+                showToast('Foto Kustom Pelatih Berhasil Dipasang!');
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // Toggle badge shelf
+        function toggleBadge(index) {
+            activeBadges[index] = !activeBadges[index];
+            updateBadgeUI();
+        }
+
+        // Update UI Selector opacity and render badges onto the actual Certificate
+        function updateBadgeUI() {
+            const container = document.getElementById('cert-badges-container');
+            const placeholder = document.getElementById('no-badges-placeholder');
+            
+            // Clear current container rendered badges
+            container.innerHTML = '';
+            
+            let hasBadges = false;
+
+            activeBadges.forEach((isActive, idx) => {
+                const btn = document.getElementById(`badge-btn-${idx}`);
+                if (isActive) {
+                    btn.classList.remove('opacity-40');
+                    btn.classList.add('opacity-100', 'border-red-500', 'bg-red-950/20');
+                    hasBadges = true;
+
+                    // Render to certificate
+                    const img = document.createElement('img');
+                    img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/${idx + 1}.png`;
+                    img.className = "w-9 h-9 object-contain filter drop-shadow-md transition-transform duration-300 hover:scale-110";
+                    img.title = badgesMetadata[idx].name;
+                    img.onerror = function() {
+                        this.src = 'https://cdn-icons-png.flaticon.com/512/8157/8157962.png';
+                    };
+                    container.appendChild(img);
+                } else {
+                    btn.classList.add('opacity-40');
+                    btn.classList.remove('border-red-500', 'bg-red-950/20');
+                }
+            });
+
+            if (!hasBadges) {
+                container.appendChild(placeholder);
+            }
+        }
+
+        // Toast Messages
+        function showToast(message) {
+            const toast = document.getElementById('toast-notif');
+            const text = document.getElementById('toast-message');
+            text.textContent = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Reset inputs
+        function resetInputs() {
+            document.getElementById('input-name').value = 'Ash Ketchum';
+            document.getElementById('input-title').value = 'Juara Liga Pokémon';
+            document.getElementById('input-region').value = 'Kanto';
+            document.getElementById('input-id').value = '092025';
+            
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            document.getElementById('input-date').value = `${year}-${month}-${day}`;
+
+            activeBadges = [true, true, true, false, false, false, false, false];
+            setTheme('classic');
+            setPartner('pikachu');
+            updateBadgeUI();
+            syncInputsToCertificate();
+            
+            showToast('Formulir berhasil disetel ulang!');
+        }
+
+        // EXPORT TO PDF VIA html2pdf.js
+        function exportToPDF() {
+            const element = document.getElementById('pokemon-certificate');
+            const trainerName = document.getElementById('input-name').value || 'Trainer';
+            
+            // Set up export configurations
+            const opt = {
+                margin: 0,
+                filename: `Sertifikat_Trainer_${trainerName.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 3, // High resolution scale
+                    useCORS: true, // Crucial for external Pokémon API image sprites
+                    letterRendering: true,
+                    scrollX: 0,
+                    scrollY: 0
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            // Show temporary loading states or toast
+            showToast('Menyiapkan berkas PDF, mohon tunggu...');
+
+            // Generate PDF
+            html2pdf().set(opt).from(element).save().then(() => {
+                showToast('Sertifikat Berhasil Diunduh!');
+            }).catch(err => {
+                console.error("PDF Export Error: ", err);
+                showToast('Gagal memproses PDF, periksa koneksi internet Anda.');
+            });
+        }
+    </script>
+</body>
+</html>
+
